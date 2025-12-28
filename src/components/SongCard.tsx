@@ -1,8 +1,6 @@
 import { FC } from 'react'
-import { Disc, X } from 'lucide-react'
-import Card from './Card'
-import Text from './Text'
-import Button from './Button'
+import { Trash2, GripVertical } from 'lucide-react'
+import ActionButton from './ActionButton'
 import type { Song } from '../types'
 
 interface SongCardProps {
@@ -13,48 +11,22 @@ interface SongCardProps {
 
 const SongCard: FC<SongCardProps> = ({ song, onClick, onRemove }) => {
     return (
-        <Card
-            icon={
-                song.album_art ? (
-                    <img
-                        src={song.album_art}
-                        alt={song.album}
-                        className="w-full h-full object-cover"
-                        draggable={false}
-                    />
-                ) : (
-                    <Disc size={48} className="text-gray-500" />
-                )
-            }
-            title={
-                <Text
-                    variant="subtitle"
-                    className="text-center truncate w-full"
-                >
-                    {song.title}
-                </Text>
-            }
-            subtitle={
-                <Text variant="caption" className="text-center truncate w-full">
-                    {song.artist}
-                </Text>
-            }
-            onClick={onClick}
-            actions={
-                onRemove && (
-                    <Button
-                        variant="icon"
-                        className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-red-500 hover:bg-red-600 text-white"
-                        onClick={e => {
-                            e.stopPropagation()
-                            onRemove()
-                        }}
-                    >
-                        <X size={16} />
-                    </Button>
-                )
-            }
-        />
+        <div className="w-full flex items-center justify-between py-2 px-4 border-b border-gray-200 hover:bg-gray-50 cursor-pointer" onClick={onClick}>
+            <div className="flex-1 min-w-0">
+                <div className="text-base font-medium truncate">{song.title}</div>
+                <div className="text-sm text-gray-500 truncate">{song.artist}</div>
+            </div>
+            <div className="flex gap-2 ml-4">
+                {onRemove && (
+                    <ActionButton onClick={(e) => { e.stopPropagation(); onRemove(); }} backgroundColor="#ef4444">
+                        <Trash2 size={14} />
+                    </ActionButton>
+                )}
+                <ActionButton onClick={(e) => e.stopPropagation()} backgroundColor="#6b7280">
+                    <GripVertical size={14} />
+                </ActionButton>
+            </div>
+        </div>
     )
 }
 
