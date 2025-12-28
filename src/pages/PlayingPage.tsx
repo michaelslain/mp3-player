@@ -14,7 +14,7 @@ import { useQueue } from '../hooks/useQueue'
 import { useAppState } from '../store/appStore'
 
 const PlayingPage: FC = () => {
-    const { setPath, setView } = useAppState()
+    const { path, setPath, setView } = useAppState()
     const { currentSong, isPlaying, currentTime, duration, play, pause, seek } =
         useAudioPlayer()
     const { playbackMode, toggleShuffle, previous, next } = useQueue()
@@ -29,6 +29,14 @@ const PlayingPage: FC = () => {
         if (index === 0) {
             setPath(['all'])
             setView('grid')
+        } else if (index === 1) {
+            // Clicking on the middle segment (All Songs or Playlist Name)
+            if (path[0] === 'all_songs') {
+                setPath(['all_songs'])
+            } else if (path[0] === 'playlist') {
+                setPath(['playlist', path[1]])
+            }
+            setView('grid')
         }
     }
 
@@ -42,7 +50,13 @@ const PlayingPage: FC = () => {
         )
     }
 
-    const pathDisplay = ['All', currentSong.title]
+    const pathDisplay = path[0] === 'all'
+        ? ['All', currentSong.title]
+        : path[0] === 'all_songs'
+        ? ['All', 'All Songs', currentSong.title]
+        : path[0] === 'playlist'
+        ? ['All', path[1], currentSong.title]
+        : ['All', currentSong.title]
 
     return (
         <div className="flex-1 flex flex-col h-full" ref={containerRef}>
