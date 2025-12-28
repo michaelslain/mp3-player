@@ -2,7 +2,6 @@ import { FC, useState } from 'react'
 import { invoke } from '@tauri-apps/api/core'
 import { CirclePlus } from 'lucide-react'
 import GridPageLayout from '../components/GridPageLayout'
-import ListItem from '../components/ListItem'
 import ActionButton from '../components/ActionButton'
 import { useAppState } from '../store/appStore'
 import { fuzzyMatch } from '../util/search'
@@ -12,7 +11,7 @@ const AddSongPage: FC = () => {
     const { path, setPath, songs, playlists, refreshPlaylists } = useAppState()
     const [searchQuery, setSearchQuery] = useState('')
 
-    const playlistName = path[1]
+    const playlistName = path[1] as string | undefined
     const currentPlaylist = playlists.find((p) => p.name === playlistName)
 
     const availableSongs = currentPlaylist
@@ -31,7 +30,7 @@ const AddSongPage: FC = () => {
     const handlePathNavigate = (index: number) => {
         if (index === 0) {
             setPath(['all'])
-        } else if (index === 1) {
+        } else if (index === 1 && playlistName) {
             setPath(['playlist', playlistName])
         }
     }
@@ -51,7 +50,7 @@ const AddSongPage: FC = () => {
         }
     }
 
-    const pathDisplay = ['All', playlistName, 'Add Songs']
+    const pathDisplay = ['All', playlistName || '', 'Add Songs']
 
     return (
         <GridPageLayout

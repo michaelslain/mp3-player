@@ -151,7 +151,7 @@ const SongsPage: FC = () => {
                                         draggableId={song.id}
                                         index={index}
                                     >
-                                        {(provided, snapshot) => (
+                                        {(provided) => (
                                             <div
                                                 ref={provided.innerRef}
                                                 {...provided.draggableProps}

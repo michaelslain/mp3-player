@@ -152,7 +152,7 @@ const AllPage: FC = () => {
                                         draggableId={playlist.id}
                                         index={index}
                                     >
-                                        {(provided, snapshot) => (
+                                        {(provided) => (
                                             <div
                                                 ref={provided.innerRef}
                                                 {...provided.draggableProps}
