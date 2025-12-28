@@ -1,4 +1,4 @@
-import { useState, useEffect, ReactNode } from 'react'
+import { FC, useState, useEffect, ReactNode } from 'react'
 import { getCurrentWindow } from '@tauri-apps/api/window'
 import { invoke } from '@tauri-apps/api/core'
 import { Upload } from 'lucide-react'
@@ -8,7 +8,7 @@ interface DropZoneProps {
     children: ReactNode
 }
 
-export function DropZone({ children }: DropZoneProps) {
+const DropZone: FC<DropZoneProps> = ({ children }) => {
     const [isDragging, setIsDragging] = useState(false)
     const [isProcessing, setIsProcessing] = useState(false)
     const { refreshSongs, refreshPlaylists } = useAppState()
@@ -117,3 +117,5 @@ export function DropZone({ children }: DropZoneProps) {
         </div>
     )
 }
+
+export default DropZone

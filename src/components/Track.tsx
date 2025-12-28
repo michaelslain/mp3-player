@@ -1,3 +1,5 @@
+import { FC } from 'react'
+
 interface TrackProps {
     currentTime: number
     duration: number
@@ -11,7 +13,7 @@ function formatTime(seconds: number): string {
     return `${mins}:${secs.toString().padStart(2, '0')}`
 }
 
-export function Track({ currentTime, duration, onSeek }: TrackProps) {
+const Track: FC<TrackProps> = ({ currentTime, duration, onSeek }) => {
     const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newTime = parseFloat(e.target.value)
         onSeek(newTime)
@@ -34,3 +36,5 @@ export function Track({ currentTime, duration, onSeek }: TrackProps) {
         </div>
     )
 }
+
+export default Track

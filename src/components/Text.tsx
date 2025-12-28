@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import { FC, ReactNode } from 'react'
 
 type TextVariant = 'title' | 'subtitle' | 'body' | 'caption'
 
@@ -15,11 +15,13 @@ const variantStyles: Record<TextVariant, string> = {
     caption: 'text-sm text-gray-500',
 }
 
-export function Text({
+const Text: FC<TextProps> = ({
     variant = 'body',
     children,
     className = '',
-}: TextProps) {
+}) => {
     const baseStyles = variantStyles[variant]
     return <div className={`${baseStyles} ${className}`}>{children}</div>
 }
+
+export default Text

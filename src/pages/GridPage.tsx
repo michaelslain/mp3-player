@@ -1,16 +1,16 @@
-import { useState } from 'react';
+import { FC, useState } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { Edit, Trash2 } from 'lucide-react';
-import { Grid } from '../components/Grid';
-import { SongCard } from '../components/SongCard';
-import { PlaylistCard } from '../components/PlaylistCard';
-import { ContextMenu } from '../components/ContextMenu';
-import { Path } from '../components/Path';
+import Grid from '../components/Grid';
+import SongCard from '../components/SongCard';
+import PlaylistCard from '../components/PlaylistCard';
+import ContextMenu from '../components/ContextMenu';
+import Path from '../components/Path';
 import { useAppState } from '../store/appStore';
 import { useQueue } from '../hooks/useQueue';
 import type { Playlist, MenuItem } from '../types';
 
-export function GridPage() {
+const GridPage: FC = () => {
   const { path, setPath, setView, songs, playlists, refreshPlaylists } = useAppState();
   const { playQueue } = useQueue();
   const [contextMenu, setContextMenu] = useState<{
@@ -201,3 +201,5 @@ export function GridPage() {
     </div>
   );
 }
+
+export default GridPage

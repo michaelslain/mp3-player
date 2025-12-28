@@ -1,5 +1,6 @@
+import { FC } from 'react'
 import { Disc, X } from 'lucide-react'
-import { Text } from './Text'
+import Text from './Text'
 import Button from './Button'
 import type { Song } from '../types'
 
@@ -9,7 +10,7 @@ interface SongCardProps {
     onRemove?: () => void
 }
 
-export function SongCard({ song, onClick, onRemove }: SongCardProps) {
+const SongCard: FC<SongCardProps> = ({ song, onClick, onRemove }) => {
     return (
         <div
             className="relative flex flex-col items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors cursor-pointer group"
@@ -50,3 +51,5 @@ export function SongCard({ song, onClick, onRemove }: SongCardProps) {
         </div>
     )
 }
+
+export default SongCard

@@ -1,5 +1,6 @@
+import { FC } from 'react'
 import { Folder } from 'lucide-react'
-import { Text } from './Text'
+import Text from './Text'
 import type { Playlist } from '../types'
 
 interface PlaylistCardProps {
@@ -8,11 +9,11 @@ interface PlaylistCardProps {
     onContextMenu?: (e: React.MouseEvent) => void
 }
 
-export function PlaylistCard({
+const PlaylistCard: FC<PlaylistCardProps> = ({
     playlist,
     onClick,
     onContextMenu,
-}: PlaylistCardProps) {
+}) => {
     return (
         <div
             className="flex flex-col items-center p-4 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors cursor-pointer"
@@ -32,3 +33,5 @@ export function PlaylistCard({
         </div>
     )
 }
+
+export default PlaylistCard

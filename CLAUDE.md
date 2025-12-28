@@ -4,12 +4,12 @@ A local music player built with Tauri (Rust backend) and React (TypeScript front
 
 ## Tech Stack
 
-- **Backend**: Rust (Tauri v2)
-- **Frontend**: React 19 + TypeScript + Vite
-- **Styling**: Tailwind CSS v4
-- **Icons**: lucide-react
-- **State**: React Context API
-- **Audio**: HTML5 `<audio>` element
+-   **Backend**: Rust (Tauri v2)
+-   **Frontend**: React 19 + TypeScript + Vite
+-   **Styling**: Tailwind CSS v4
+-   **Icons**: lucide-react
+-   **State**: React Context API
+-   **Audio**: HTML5 `<audio>` element
 
 ## Project Structure
 
@@ -58,70 +58,75 @@ src-tauri/
 
 ### File Organization
 
-- **All Songs**: `$APPDATA/music/all_songs/` - All imported MP3 files stored here
-- **Playlists**: `$APPDATA/music/playlists/{playlist_name}/` - Contains symlinks to songs in all_songs
-- **Metadata Cache**: `$APPDATA/metadata.json` - Cached ID3 data (title, artist, album, duration, base64 album art)
+-   **All Songs**: `$APPDATA/music/all_songs/` - All imported MP3 files stored here
+-   **Playlists**: `$APPDATA/music/playlists/{playlist_name}/` - Contains symlinks to songs in all_songs
+-   **Metadata Cache**: `$APPDATA/metadata.json` - Cached ID3 data (title, artist, album, duration, base64 album art)
 
 ### Tauri Commands
 
 **Import**:
-- `import_files(file_paths: Vec<String>)` → `Vec<Song>`
-- `import_folder(folder_path: String, playlist_name: String)` → `Playlist`
+
+-   `import_files(file_paths: Vec<String>)` → `Vec<Song>`
+-   `import_folder(folder_path: String, playlist_name: String)` → `Playlist`
 
 **Song Queries**:
-- `get_all_songs()` → `Vec<Song>`
-- `get_song_file_path(song_id: String)` → `String` (absolute path)
-- `search_songs(query: String)` → `Vec<Song>`
+
+-   `get_all_songs()` → `Vec<Song>`
+-   `get_song_file_path(song_id: String)` → `String` (absolute path)
+-   `search_songs(query: String)` → `Vec<Song>`
 
 **Playlist Queries**:
-- `get_all_playlists()` → `Vec<Playlist>`
-- `get_playlist(id: String)` → `Playlist`
-- `search_playlists(query: String)` → `Vec<Playlist>`
+
+-   `get_all_playlists()` → `Vec<Playlist>`
+-   `get_playlist(id: String)` → `Playlist`
+-   `search_playlists(query: String)` → `Vec<Playlist>`
 
 **Playlist Editing**:
-- `add_songs_to_playlist(playlist_id: String, song_ids: Vec<String>)`
-- `remove_songs_from_playlist(playlist_id: String, song_ids: Vec<String>)`
-- `rename_playlist(playlist_id: String, new_name: String)` → `Playlist`
-- `delete_playlist(id: String)`
+
+-   `add_songs_to_playlist(playlist_id: String, song_ids: Vec<String>)`
+-   `remove_songs_from_playlist(playlist_id: String, song_ids: Vec<String>)`
+-   `rename_playlist(playlist_id: String, new_name: String)` → `Playlist`
+-   `delete_playlist(id: String)`
 
 ## Frontend
 
 ### State Management (`appStore.tsx`)
 
 Global state includes:
-- `view`: `'grid' | 'playing'`
-- `path`: Navigation breadcrumb (e.g., `['all']`, `['playlist', 'id']`)
-- `songs`: All imported songs
-- `playlists`: All playlists
-- `currentQueue`: Currently playing queue
-- `currentIndex`: Index in queue
-- `playbackMode`: `'sequential' | 'shuffle'` (defaults to shuffle)
-- `isPlaying`, `currentTime`, `volume`: Playback state
+
+-   `view`: `'grid' | 'playing'`
+-   `path`: Navigation breadcrumb (e.g., `['all']`, `['playlist', 'id']`)
+-   `songs`: All imported songs
+-   `playlists`: All playlists
+-   `currentQueue`: Currently playing queue
+-   `currentIndex`: Index in queue
+-   `playbackMode`: `'sequential' | 'shuffle'` (defaults to shuffle)
+-   `isPlaying`, `currentTime`, `volume`: Playback state
 
 ### Audio Playback
 
-- Uses global `HTMLAudioElement` singleton via `getAudioElement()`
-- Loads songs by reading file bytes via Tauri FS plugin and creating blob URLs
-- Supports play, pause, seek, volume control
-- Auto-advances to next song when current ends
+-   Uses global `HTMLAudioElement` singleton via `getAudioElement()`
+-   Loads songs by reading file bytes via Tauri FS plugin and creating blob URLs
+-   Supports play, pause, seek, volume control
+-   Auto-advances to next song when current ends
 
 ### Drag & Drop
 
-- Listens for Tauri v2 `onDragDropEvent()` API
-- **Files**: Imports to "All Songs" via `import_files()`
-- **Folders**: Creates playlist with folder name via `import_folder()`
-- Prevents duplicate imports with `isProcessing` flag
+-   Listens for Tauri v2 `onDragDropEvent()` API
+-   **Files**: Imports to "All Songs" via `import_files()`
+-   **Folders**: Creates playlist with folder name via `import_folder()`
+-   Prevents duplicate imports with `isProcessing` flag
 
 ### Navigation
 
-- **Grid View**: Shows all playlists + "All Songs" card, or songs within a playlist
-- **Playing View**: Shows current song info, controls, progress bar, shuffle toggle
-- Path breadcrumb allows clicking to navigate back
+-   **Grid View**: Shows all playlists + "All Songs" card, or songs within a playlist
+-   **Playing View**: Shows current song info, controls, progress bar, shuffle toggle
+-   Path breadcrumb allows clicking to navigate back
 
 ### Playlist Management
 
-- Right-click on playlist card shows context menu (Rename, Delete)
-- Inside playlist view: can add songs from All Songs or remove songs
+-   Right-click on playlist card shows context menu (Rename, Delete)
+-   Inside playlist view: can add songs from All Songs or remove songs
 
 ## Configuration
 
@@ -129,17 +134,19 @@ Global state includes:
 
 ```json
 {
-  "app": {
-    "windows": [{
-      "dragDropEnabled": true  // Enable file drag & drop
-    }],
-    "security": {
-      "assetProtocol": {
-        "enable": true,
-        "scope": ["**"]
-      }
+    "app": {
+        "windows": [
+            {
+                "dragDropEnabled": true // Enable file drag & drop
+            }
+        ],
+        "security": {
+            "assetProtocol": {
+                "enable": true,
+                "scope": ["**"]
+            }
+        }
     }
-  }
 }
 ```
 
@@ -147,17 +154,17 @@ Global state includes:
 
 ```json
 {
-  "permissions": [
-    "core:default",
-    "opener:default",
-    "core:path:default",
-    "core:event:default",
-    "fs:default",
-    {
-      "identifier": "fs:scope",
-      "allow": ["$APPDATA/**/*"]  // Required for reading MP3 files
-    }
-  ]
+    "permissions": [
+        "core:default",
+        "opener:default",
+        "core:path:default",
+        "core:event:default",
+        "fs:default",
+        {
+            "identifier": "fs:scope",
+            "allow": ["$APPDATA/**/*"] // Required for reading MP3 files
+        }
+    ]
 }
 ```
 
@@ -165,32 +172,37 @@ Global state includes:
 
 ```js
 export default {
-  plugins: {
-    '@tailwindcss/postcss': {},  // Tailwind v4 requires separate plugin
-    autoprefixer: {},
-  },
+    plugins: {
+        '@tailwindcss/postcss': {}, // Tailwind v4 requires separate plugin
+        autoprefixer: {},
+    },
 }
 ```
 
 ## Known Issues & Fixes
 
 ### Images Draggable
-- **Fix**: Add `draggable={false}` to all `<img>` tags
+
+-   **Fix**: Add `draggable={false}` to all `<img>` tags
 
 ### Playing Page Blank Until Scroll
-- **Cause**: Scroll position preserved when switching from GridPage to PlayingPage
-- **Fix**: `window.scrollTo(0, 0)` in `useLayoutEffect` on PlayingPage mount
+
+-   **Cause**: Scroll position preserved when switching from GridPage to PlayingPage
+-   **Fix**: `window.scrollTo(0, 0)` in `useLayoutEffect` on PlayingPage mount
 
 ### Time Display Issues
-- Duration requires listening for `loadedmetadata` event, stored in state
-- Format: `formatTime(seconds)` → `"4:08"`
+
+-   Duration requires listening for `loadedmetadata` event, stored in state
+-   Format: `formatTime(seconds)` → `"4:08"`
 
 ### Duplicate Songs on Import
-- **Fix**: `isProcessing` state + `mounted` flag in DropZone to prevent concurrent imports
+
+-   **Fix**: `isProcessing` state + `mounted` flag in DropZone to prevent concurrent imports
 
 ### Tauri v2 File Drop API
-- Old API: `listen('tauri://file-drop')` ❌
-- New API: `getCurrentWindow().onDragDropEvent()` ✅
+
+-   Old API: `listen('tauri://file-drop')` ❌
+-   New API: `getCurrentWindow().onDragDropEvent()` ✅
 
 ## Development
 
@@ -210,9 +222,9 @@ bun run tauri build -- --debug
 
 ## Design Decisions
 
-- **No routing library**: Simple state-based view switching is sufficient
-- **No database**: Filesystem + JSON metadata cache
-- **MVP styling**: Minimal Tailwind classes, no custom design system
-- **Shuffle default**: Users prefer shuffle mode by default
-- **Blob URLs**: More reliable than asset protocol for audio playback
-- **Global audio element**: Prevents issues with unmounting/remounting pages
+-   **No routing library**: Simple state-based view switching is sufficient
+-   **No database**: Filesystem + JSON metadata cache
+-   **MVP styling**: Minimal Tailwind classes, no custom design system
+-   **Shuffle default**: Users prefer shuffle mode by default
+-   **Blob URLs**: More reliable than asset protocol for audio playback
+-   **Global audio element**: Prevents issues with unmounting/remounting pages

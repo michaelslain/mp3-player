@@ -1,12 +1,13 @@
+import { FC } from 'react'
 import { ChevronRight } from 'lucide-react'
-import { Text } from './Text'
+import Text from './Text'
 
 interface PathProps {
     path: string[]
     onNavigate: (index: number) => void
 }
 
-export function Path({ path, onNavigate }: PathProps) {
+const Path: FC<PathProps> = ({ path, onNavigate }) => {
     return (
         <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 border-b border-gray-200">
             {path.map((segment, index) => (
@@ -25,3 +26,5 @@ export function Path({ path, onNavigate }: PathProps) {
         </div>
     )
 }
+
+export default Path

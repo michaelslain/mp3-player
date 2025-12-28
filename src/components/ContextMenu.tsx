@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { FC, useEffect, useRef } from 'react'
 import type { MenuItem } from '../types'
 
 interface ContextMenuProps {
@@ -7,7 +7,7 @@ interface ContextMenuProps {
     onClose: () => void
 }
 
-export function ContextMenu({ items, position, onClose }: ContextMenuProps) {
+const ContextMenu: FC<ContextMenuProps> = ({ items, position, onClose }) => {
     const menuRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
@@ -57,3 +57,5 @@ export function ContextMenu({ items, position, onClose }: ContextMenuProps) {
         </div>
     )
 }
+
+export default ContextMenu

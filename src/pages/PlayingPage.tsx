@@ -1,18 +1,19 @@
+import { FC } from 'react'
 import { Disc, Shuffle } from 'lucide-react'
 import { useLayoutEffect, useRef } from 'react'
-import { Text } from '../components/Text'
-import { Track } from '../components/Track'
-import { PlayButton } from '../components/controls/PlayButton'
-import { PauseButton } from '../components/controls/PauseButton'
-import { SkipBackButton } from '../components/controls/SkipBackButton'
-import { SkipForwardButton } from '../components/controls/SkipForwardButton'
+import Text from '../components/Text'
+import Track from '../components/Track'
+import PlayButton from '../components/controls/PlayButton'
+import PauseButton from '../components/controls/PauseButton'
+import SkipBackButton from '../components/controls/SkipBackButton'
+import SkipForwardButton from '../components/controls/SkipForwardButton'
 import Button from '../components/Button'
-import { Path } from '../components/Path'
+import Path from '../components/Path'
 import { useAudioPlayer } from '../hooks/useAudioPlayer'
 import { useQueue } from '../hooks/useQueue'
 import { useAppState } from '../store/appStore'
 
-export function PlayingPage() {
+const PlayingPage: FC = () => {
     const { setPath, setView } = useAppState()
     const { currentSong, isPlaying, currentTime, duration, play, pause, seek } =
         useAudioPlayer()
@@ -118,3 +119,5 @@ export function PlayingPage() {
         </div>
     )
 }
+
+export default PlayingPage

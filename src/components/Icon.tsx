@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import { FC, ReactNode } from 'react'
 
 type IconSize = 'sm' | 'md' | 'lg' | 'xl'
 
@@ -15,7 +15,9 @@ const sizeStyles: Record<IconSize, string> = {
     xl: 'w-12 h-12',
 }
 
-export function Icon({ children, size = 'md', className = '' }: IconProps) {
+const Icon: FC<IconProps> = ({ children, size = 'md', className = '' }) => {
     const baseStyles = sizeStyles[size]
     return <div className={`${baseStyles} ${className}`}>{children}</div>
 }
+
+export default Icon

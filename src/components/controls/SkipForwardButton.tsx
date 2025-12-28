@@ -1,3 +1,4 @@
+import { FC } from 'react'
 import { SkipForward } from 'lucide-react'
 import Button from '../Button'
 
@@ -6,13 +7,15 @@ interface SkipForwardButtonProps {
     disabled?: boolean
 }
 
-export function SkipForwardButton({
+const SkipForwardButton: FC<SkipForwardButtonProps> = ({
     onClick,
     disabled,
-}: SkipForwardButtonProps) {
+}) => {
     return (
         <Button variant="icon" onClick={onClick} disabled={disabled}>
             <SkipForward size={24} />
         </Button>
     )
 }
+
+export default SkipForwardButton
