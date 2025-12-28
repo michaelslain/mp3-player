@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { Disc, Shuffle } from 'lucide-react'
+import { Disc } from 'lucide-react'
 import { useLayoutEffect, useRef } from 'react'
 import Text from '../components/Text'
 import Track from '../components/Track'
@@ -7,7 +7,7 @@ import PlayButton from '../components/controls/PlayButton'
 import PauseButton from '../components/controls/PauseButton'
 import SkipBackButton from '../components/controls/SkipBackButton'
 import SkipForwardButton from '../components/controls/SkipForwardButton'
-import Button from '../components/Button'
+import ShuffleButton from '../components/controls/ShuffleButton'
 import Path from '../components/Path'
 import { useAudioPlayer } from '../hooks/useAudioPlayer'
 import { useQueue } from '../hooks/useQueue'
@@ -45,17 +45,17 @@ const PlayingPage: FC = () => {
     const pathDisplay = ['All', currentSong.title]
 
     return (
-        <div className="flex-1 flex flex-col min-h-0" ref={containerRef}>
+        <div className="flex-1 flex flex-col h-full" ref={containerRef}>
             <Path path={pathDisplay} onNavigate={handlePathNavigate} />
 
-            <div className="flex-1 flex flex-col items-center justify-center gap-6 p-8 min-h-0">
+            <div className="flex-1 flex flex-col items-center justify-center pt-1">
                 {/* Album Art */}
-                <div className="w-48 h-48 flex items-center justify-center bg-gray-300 rounded-lg shadow-lg">
+                <div className="w-48 aspect-square flex items-center justify-center rounded-lg overflow-hidden shadow-lg">
                     {currentSong.album_art ? (
                         <img
                             src={currentSong.album_art}
                             alt={currentSong.album}
-                            className="w-full h-full object-cover rounded-lg"
+                            className="w-full h-full object-cover"
                             draggable={false}
                         />
                     ) : (
@@ -99,22 +99,10 @@ const PlayingPage: FC = () => {
                 </div>
 
                 {/* Shuffle Toggle */}
-                <Button
-                    variant="ghost"
+                <ShuffleButton
+                    isShuffling={playbackMode === 'shuffle'}
                     onClick={toggleShuffle}
-                    className={
-                        playbackMode === 'shuffle'
-                            ? 'text-blue-600'
-                            : 'text-gray-600'
-                    }
-                >
-                    <Shuffle size={20} />
-                    <span className="ml-2">
-                        {playbackMode === 'shuffle'
-                            ? 'Shuffle On'
-                            : 'Sequential'}
-                    </span>
-                </Button>
+                />
             </div>
         </div>
     )

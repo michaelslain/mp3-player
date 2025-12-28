@@ -1,11 +1,11 @@
-import { FC, ReactNode } from 'react'
+import { FC, ReactNode, MouseEventHandler } from 'react'
 
 type ButtonVariant = 'primary' | 'ghost' | 'icon'
 
 interface ButtonProps {
     variant?: ButtonVariant
     children: ReactNode
-    onClick?: (e?: React.MouseEvent) => void
+    onClick?: MouseEventHandler<HTMLButtonElement>
     className?: string
     disabled?: boolean
 }
@@ -29,9 +29,15 @@ const Button: FC<ButtonProps> = ({
         ? 'opacity-50 cursor-not-allowed'
         : 'cursor-pointer'
 
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        if (onClick) {
+            onClick(e)
+        }
+    }
+
     return (
         <button
-            onClick={(e) => onClick?.(e)}
+            onClick={handleClick}
             disabled={disabled}
             className={`${baseStyles} ${disabledStyles} ${className} transition-colors`}
         >

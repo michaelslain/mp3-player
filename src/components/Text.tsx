@@ -10,9 +10,9 @@ interface TextProps {
 
 const variantStyles: Record<TextVariant, string> = {
     title: 'text-2xl font-bold',
-    subtitle: 'text-lg font-semibold',
-    body: 'text-base',
-    caption: 'text-sm text-gray-500',
+    subtitle: 'text-[0.7rem] font-semibold',
+    body: 'text-[0.7rem]',
+    caption: 'text-[0.7rem] text-gray-500',
 }
 
 const Text: FC<TextProps> = ({

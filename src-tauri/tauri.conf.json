@@ -13,8 +13,9 @@
     "windows": [
       {
         "title": "mp3-player",
-        "width": 800,
-        "height": 600,
+        "width": 300,
+        "height": 500,
+        "resizable": false,
         "dragDropEnabled": true
       }
     ],
