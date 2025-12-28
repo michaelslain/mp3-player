@@ -11,7 +11,22 @@ interface DropZoneProps {
 const DropZone: FC<DropZoneProps> = ({ children }) => {
     const [isDragging, setIsDragging] = useState(false)
     const [isProcessing, setIsProcessing] = useState(false)
+    const [isInternalDrag, setIsInternalDrag] = useState(false)
     const { refreshSongs, refreshPlaylists } = useAppState()
+
+    useEffect(() => {
+        // Listen for internal drag events
+        const handleInternalDragStart = () => setIsInternalDrag(true)
+        const handleInternalDragEnd = () => setIsInternalDrag(false)
+
+        window.addEventListener('internal-drag-start', handleInternalDragStart)
+        window.addEventListener('internal-drag-end', handleInternalDragEnd)
+
+        return () => {
+            window.removeEventListener('internal-drag-start', handleInternalDragStart)
+            window.removeEventListener('internal-drag-end', handleInternalDragEnd)
+        }
+    }, [])
 
     useEffect(() => {
         let unlistenDrop: (() => void) | undefined
@@ -22,7 +37,7 @@ const DropZone: FC<DropZoneProps> = ({ children }) => {
             const window = getCurrentWindow()
 
             unlistenDrop = await window.onDragDropEvent(async event => {
-                if (!mounted) return // Ignore events if component unmounted
+                if (!mounted || isInternalDrag) return // Ignore events if component unmounted or internal drag
                 console.log('Drag drop event received:', event)
 
                 if (event.payload.type === 'drop') {
@@ -90,7 +105,7 @@ const DropZone: FC<DropZoneProps> = ({ children }) => {
             mounted = false
             if (unlistenDrop) unlistenDrop()
         }
-    }, [refreshSongs, refreshPlaylists])
+    }, [refreshSongs, refreshPlaylists, isInternalDrag])
 
     return (
         <div className="relative w-full h-full">

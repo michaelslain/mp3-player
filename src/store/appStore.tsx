@@ -12,6 +12,9 @@ interface AppContextType extends AppState {
   setVolume: (volume: number) => void;
   refreshSongs: () => Promise<void>;
   refreshPlaylists: () => Promise<void>;
+  updatePlaylistName: (playlistId: string, newName: string) => void;
+  updatePlaylistSongOrder: (playlistId: string, songIds: string[]) => void;
+  reorderPlaylists: (newOrder: Playlist[]) => void;
   nextSong: () => void;
   previousSong: () => void;
 }
@@ -54,15 +57,61 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
   };
 
   const nextSong = () => {
-    if (currentIndex < currentQueue.length - 1) {
-      setCurrentIndex(currentIndex + 1);
+    if (currentQueue.length === 0) return;
+
+    if (playbackMode === 'shuffle') {
+      // Pick a random song from the queue
+      const randomIndex = Math.floor(Math.random() * currentQueue.length);
+      setCurrentIndex(randomIndex);
+    } else {
+      // Sequential: go to next song, or loop back to start
+      if (currentIndex < currentQueue.length - 1) {
+        setCurrentIndex(currentIndex + 1);
+      } else {
+        setCurrentIndex(0);
+      }
     }
   };
 
   const previousSong = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
+    if (currentQueue.length === 0) return;
+
+    if (playbackMode === 'shuffle') {
+      // Pick a random song from the queue
+      const randomIndex = Math.floor(Math.random() * currentQueue.length);
+      setCurrentIndex(randomIndex);
+    } else {
+      // Sequential: go to previous song, or loop to end
+      if (currentIndex > 0) {
+        setCurrentIndex(currentIndex - 1);
+      } else {
+        setCurrentIndex(currentQueue.length - 1);
+      }
     }
+  };
+
+  const updatePlaylistName = (playlistId: string, newName: string) => {
+    setPlaylists(prevPlaylists =>
+      prevPlaylists.map(playlist =>
+        playlist.id === playlistId
+          ? { ...playlist, name: newName }
+          : playlist
+      )
+    );
+  };
+
+  const updatePlaylistSongOrder = (playlistId: string, songIds: string[]) => {
+    setPlaylists(prevPlaylists =>
+      prevPlaylists.map(playlist =>
+        playlist.id === playlistId
+          ? { ...playlist, song_ids: songIds }
+          : playlist
+      )
+    );
+  };
+
+  const reorderPlaylists = (newOrder: Playlist[]) => {
+    setPlaylists(newOrder);
   };
 
   // Load initial data
@@ -91,6 +140,9 @@ export function AppStateProvider({ children }: { children: ReactNode }) {
     setVolume,
     refreshSongs,
     refreshPlaylists,
+    updatePlaylistName,
+    updatePlaylistSongOrder,
+    reorderPlaylists,
     nextSong,
     previousSong,
   };

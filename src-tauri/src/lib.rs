@@ -125,7 +125,53 @@ async fn search_playlists(query: String, app_handle: tauri::AppHandle) -> Result
     Ok(results)
 }
 
+// ==================== SONG EDITING COMMANDS ====================
+
+#[tauri::command]
+async fn delete_song(song_id: String, app_handle: tauri::AppHandle) -> Result<(), String> {
+    // Load metadata to get the song's file path
+    let mut metadata_cache = metadata::load_metadata_cache(&app_handle)?;
+
+    let song = metadata_cache
+        .songs
+        .iter()
+        .find(|s| s.id == song_id)
+        .ok_or_else(|| format!("Song not found: {}", song_id))?;
+
+    // Get the absolute path of the song file
+    let absolute_path = filesystem::get_song_absolute_path(&song.file_path, &app_handle)?;
+
+    // Delete the actual song file
+    if absolute_path.exists() {
+        std::fs::remove_file(&absolute_path)
+            .map_err(|e| format!("Failed to delete song file: {}", e))?;
+    }
+
+    // Remove song from all playlists
+    let playlists = playlist_manager::get_all_playlists(&app_handle)?;
+    for playlist in playlists {
+        if playlist.song_ids.contains(&song_id) {
+            playlist_manager::remove_songs_from_playlist(
+                playlist.id,
+                vec![song_id.clone()],
+                &app_handle,
+            )?;
+        }
+    }
+
+    // Remove song from metadata cache
+    metadata_cache.songs.retain(|s| s.id != song_id);
+    metadata::save_metadata_cache(&metadata_cache, &app_handle)?;
+
+    Ok(())
+}
+
 // ==================== PLAYLIST EDITING COMMANDS ====================
+
+#[tauri::command]
+async fn create_playlist(name: String, app_handle: tauri::AppHandle) -> Result<Playlist, String> {
+    playlist_manager::create_playlist(name, Vec::new(), &app_handle)
+}
 
 #[tauri::command]
 async fn add_songs_to_playlist(
@@ -159,6 +205,23 @@ async fn delete_playlist(id: String, app_handle: tauri::AppHandle) -> Result<(),
     playlist_manager::delete_playlist(id, &app_handle)
 }
 
+#[tauri::command]
+async fn reorder_playlist_songs(
+    playlist_id: String,
+    song_ids: Vec<String>,
+    app_handle: tauri::AppHandle,
+) -> Result<(), String> {
+    playlist_manager::reorder_playlist_songs(playlist_id, song_ids, &app_handle)
+}
+
+#[tauri::command]
+async fn reorder_playlists(
+    playlist_ids: Vec<String>,
+    app_handle: tauri::AppHandle,
+) -> Result<(), String> {
+    playlist_manager::reorder_playlists(playlist_ids, &app_handle)
+}
+
 // ==================== APP RUNNER ====================
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -169,6 +232,10 @@ pub fn run() {
         .setup(|app| {
             // Initialize app data directory on startup
             filesystem::init_app_data_dir(&app.handle())?;
+
+            // Remove any duplicate playlists
+            playlist_manager::deduplicate_playlists(&app.handle())?;
+
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
@@ -177,13 +244,17 @@ pub fn run() {
             get_all_songs,
             get_song_file_path,
             search_songs,
+            delete_song,
             get_all_playlists,
             get_playlist,
             search_playlists,
+            create_playlist,
             add_songs_to_playlist,
             remove_songs_from_playlist,
             rename_playlist,
             delete_playlist,
+            reorder_playlist_songs,
+            reorder_playlists,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

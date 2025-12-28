@@ -10,13 +10,15 @@ pub fn create_playlist(
     song_ids: Vec<String>,
     app_handle: &tauri::AppHandle,
 ) -> Result<Playlist, String> {
+    use uuid::Uuid;
+
     let app_data_path = filesystem::get_app_data_path(app_handle)?;
     let playlists_dir = app_data_path.join("music/playlists");
     let all_songs_dir = app_data_path.join("music/all_songs");
 
-    // Sanitize playlist name for filesystem
-    let sanitized_name = sanitize_name(&name);
-    let playlist_dir = playlists_dir.join(&sanitized_name);
+    // Generate unique ID for playlist
+    let playlist_id = Uuid::new_v4().to_string();
+    let playlist_dir = playlists_dir.join(&playlist_id);
 
     // Create playlist directory
     fs::create_dir_all(&playlist_dir)
@@ -29,13 +31,13 @@ pub fn create_playlist(
     for song_id in &song_ids {
         if let Some(song) = metadata_cache.songs.iter().find(|s| s.id == *song_id) {
             let song_path = all_songs_dir.join(&song.file_path);
-            filesystem::create_playlist_symlink(&song_path, &sanitized_name, app_handle)?;
+            filesystem::create_playlist_symlink(&song_path, &playlist_id, app_handle)?;
         }
     }
 
     // Create playlist metadata
     let playlist = Playlist {
-        id: sanitized_name.clone(),
+        id: playlist_id,
         name,
         song_ids,
         created_at: SystemTime::now()
@@ -158,18 +160,7 @@ pub fn rename_playlist(
     new_name: String,
     app_handle: &tauri::AppHandle,
 ) -> Result<Playlist, String> {
-    let app_data_path = filesystem::get_app_data_path(app_handle)?;
-    let playlists_dir = app_data_path.join("music/playlists");
-
-    let old_dir = playlists_dir.join(&playlist_id);
-    let new_sanitized_name = sanitize_name(&new_name);
-    let new_dir = playlists_dir.join(&new_sanitized_name);
-
-    // Rename directory
-    fs::rename(&old_dir, &new_dir)
-        .map_err(|e| format!("Failed to rename playlist directory: {}", e))?;
-
-    // Update metadata
+    // Update metadata - just change the name, keep the ID the same
     let mut metadata_cache = metadata::load_metadata_cache(app_handle)?;
     let playlist = metadata_cache
         .playlists
@@ -177,7 +168,6 @@ pub fn rename_playlist(
         .find(|p| p.id == playlist_id)
         .ok_or_else(|| format!("Playlist not found: {}", playlist_id))?;
 
-    playlist.id = new_sanitized_name.clone();
     playlist.name = new_name;
 
     let updated_playlist = playlist.clone();
@@ -218,6 +208,84 @@ pub fn search_playlists(query: &str, playlists: &[Playlist]) -> Vec<Playlist> {
         .filter(|playlist| playlist.name.to_lowercase().contains(&query_lower))
         .cloned()
         .collect()
+}
+
+/// Reorder songs in a playlist
+pub fn reorder_playlist_songs(
+    playlist_id: String,
+    song_ids: Vec<String>,
+    app_handle: &tauri::AppHandle,
+) -> Result<(), String> {
+    // Update metadata with new song order
+    let mut metadata_cache = metadata::load_metadata_cache(app_handle)?;
+
+    let playlist = metadata_cache
+        .playlists
+        .iter_mut()
+        .find(|p| p.id == playlist_id)
+        .ok_or_else(|| format!("Playlist not found: {}", playlist_id))?;
+
+    playlist.song_ids = song_ids;
+
+    metadata::save_metadata_cache(&metadata_cache, app_handle)?;
+
+    Ok(())
+}
+
+/// Reorder playlists to match a new order
+pub fn reorder_playlists(
+    playlist_ids: Vec<String>,
+    app_handle: &tauri::AppHandle,
+) -> Result<(), String> {
+    let mut metadata_cache = metadata::load_metadata_cache(app_handle)?;
+
+    // Create a new ordered playlist array
+    let mut new_playlists = Vec::new();
+
+    for id in playlist_ids {
+        if let Some(playlist) = metadata_cache.playlists.iter().find(|p| p.id == id) {
+            new_playlists.push(playlist.clone());
+        }
+    }
+
+    // Update the metadata cache with the new order
+    metadata_cache.playlists = new_playlists;
+    metadata::save_metadata_cache(&metadata_cache, app_handle)?;
+
+    Ok(())
+}
+
+/// Remove duplicate playlists (keeping the first occurrence of each unique ID)
+pub fn deduplicate_playlists(app_handle: &tauri::AppHandle) -> Result<(), String> {
+    let mut metadata_cache = metadata::load_metadata_cache(app_handle)?;
+    let original_count = metadata_cache.playlists.len();
+
+    // Track seen IDs and keep only first occurrence
+    let mut seen_ids = std::collections::HashSet::new();
+    let mut unique_playlists = Vec::new();
+
+    for playlist in metadata_cache.playlists {
+        if seen_ids.insert(playlist.id.clone()) {
+            unique_playlists.push(playlist);
+        } else {
+            // Delete the duplicate playlist directory if it exists
+            let app_data_path = filesystem::get_app_data_path(app_handle)?;
+            let playlist_dir = app_data_path.join("music/playlists").join(&playlist.id);
+
+            if playlist_dir.exists() {
+                let _ = fs::remove_dir_all(&playlist_dir);
+            }
+        }
+    }
+
+    let duplicates_removed = original_count - unique_playlists.len();
+
+    if duplicates_removed > 0 {
+        metadata_cache.playlists = unique_playlists;
+        metadata::save_metadata_cache(&metadata_cache, app_handle)?;
+    }
+
+    Ok(())
 }
 
 /// Sanitize a playlist name for use as a directory name

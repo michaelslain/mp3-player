@@ -13,8 +13,8 @@ interface ButtonProps {
 const variantStyles: Record<ButtonVariant, string> = {
     primary:
         'px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 active:bg-blue-800',
-    ghost: 'px-4 py-2 bg-transparent hover:bg-gray-200 active:bg-gray-300 rounded',
-    icon: 'p-2 bg-transparent hover:bg-gray-200 active:bg-gray-300 rounded-full',
+    ghost: 'px-4 py-2 bg-transparent hover:bg-gray-700 active:bg-gray-600 rounded text-gray-300',
+    icon: 'p-2 bg-transparent hover:bg-gray-700 active:bg-gray-600 rounded-full text-gray-300',
 }
 
 const Button: FC<ButtonProps> = ({

@@ -9,17 +9,17 @@ interface PathProps {
 
 const Path: FC<PathProps> = ({ path, onNavigate }) => {
     return (
-        <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 border-b border-gray-200">
+        <div className="flex items-center gap-2 px-4 py-2 bg-gray-800 border-b border-gray-700">
             {path.map((segment, index) => (
                 <div key={index} className="flex items-center gap-2">
                     <button
                         onClick={() => onNavigate(index)}
-                        className="hover:text-blue-600 transition-colors"
+                        className="text-gray-300 hover:text-blue-400 transition-colors"
                     >
                         <Text variant="body">{segment}</Text>
                     </button>
                     {index < path.length - 1 && (
-                        <ChevronRight size={16} className="text-gray-400" />
+                        <ChevronRight size={16} className="text-gray-500" />
                     )}
                 </div>
             ))}

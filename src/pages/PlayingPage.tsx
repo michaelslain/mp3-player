@@ -43,20 +43,21 @@ const PlayingPage: FC = () => {
     if (!currentSong) {
         return (
             <div className="flex-1 flex items-center justify-center">
-                <Text variant="subtitle" className="text-gray-500">
+                <Text variant="subtitle" className="text-gray-400">
                     No song playing
                 </Text>
             </div>
         )
     }
 
-    const pathDisplay = path[0] === 'all'
-        ? ['All', currentSong.title]
-        : path[0] === 'all_songs'
-        ? ['All', 'All Songs', currentSong.title]
-        : path[0] === 'playlist'
-        ? ['All', path[1], currentSong.title]
-        : ['All', currentSong.title]
+    const pathDisplay =
+        path[0] === 'all'
+            ? ['All', currentSong.title]
+            : path[0] === 'all_songs'
+            ? ['All', 'All Songs', currentSong.title]
+            : path[0] === 'playlist'
+            ? ['All', path[1], currentSong.title]
+            : ['All', currentSong.title]
 
     return (
         <div className="flex-1 flex flex-col h-full" ref={containerRef}>
@@ -64,7 +65,7 @@ const PlayingPage: FC = () => {
 
             <div className="flex-1 flex flex-col items-center justify-center pt-1">
                 {/* Album Art */}
-                <div className="w-48 aspect-square flex items-center justify-center rounded-lg overflow-hidden shadow-lg">
+                <div className="w-48 aspect-square flex items-center justify-center rounded-lg overflow-hidden shadow-lg bg-gray-800">
                     {currentSong.album_art ? (
                         <img
                             src={currentSong.album_art}
@@ -73,23 +74,18 @@ const PlayingPage: FC = () => {
                             draggable={false}
                         />
                     ) : (
-                        <Disc size={96} className="text-gray-500" />
+                        <Disc size={96} className="text-gray-600" />
                     )}
                 </div>
 
                 {/* Song Info */}
                 <div className="text-center">
-                    <Text variant="title" className="mb-2">
+                    <Text variant="title" className="mb-2 text-white">
                         {currentSong.title}
                     </Text>
-                    <Text variant="subtitle" className="text-gray-600">
+                    <Text variant="subtitle" className="text-gray-300">
                         {currentSong.artist}
                     </Text>
-                    {currentSong.album && (
-                        <Text variant="caption" className="mt-1">
-                            {currentSong.album}
-                        </Text>
-                    )}
                 </div>
 
                 {/* Playback Controls */}

@@ -23,6 +23,7 @@ export type PathSegment =
   | ['all']
   | ['all_songs']
   | ['playlist', string]
+  | ['add_song', string]
   | ['song', string];
 
 export type PlaybackMode = 'sequential' | 'shuffle';

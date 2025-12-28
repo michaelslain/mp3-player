@@ -2,20 +2,28 @@ import { FC, MouseEventHandler } from 'react'
 
 interface ActionButtonProps {
     onClick?: MouseEventHandler<HTMLButtonElement>
-    backgroundColor: string
+    color: string
     children: React.ReactNode
 }
 
 const ActionButton: FC<ActionButtonProps> = ({
     onClick,
-    backgroundColor,
+    color,
     children,
 }) => {
+    const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+        alert('ActionButton clicked!')
+        console.log('ActionButton clicked')
+        if (onClick) {
+            onClick(e)
+        }
+    }
+
     return (
         <button
-            onClick={onClick}
-            className="w-6 h-6 flex items-center justify-center text-white text-sm"
-            style={{ backgroundColor }}
+            onClick={handleClick}
+            className="w-6 h-6 flex items-center justify-center text-sm cursor-pointer"
+            style={{ color }}
         >
             {children}
         </button>

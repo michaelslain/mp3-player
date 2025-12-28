@@ -27,9 +27,9 @@ const Track: FC<TrackProps> = ({ currentTime, duration, onSeek }) => {
                 max={duration || 0}
                 value={currentTime}
                 onChange={handleSeek}
-                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                className="w-full h-2 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
             />
-            <div className="flex justify-between text-sm text-gray-600 px-1">
+            <div className="flex justify-between text-sm text-gray-400 px-1">
                 <span className="min-w-[3rem]">{formatTime(currentTime)}</span>
                 <span className="min-w-[3rem]">{formatTime(duration)}</span>
             </div>

@@ -12,7 +12,7 @@ const ShuffleButton: FC<ShuffleButtonProps> = ({ isShuffling, onClick }) => {
         <Button
             variant="ghost"
             onClick={onClick}
-            className={isShuffling ? 'text-blue-600' : 'text-gray-600'}
+            className={isShuffling ? 'text-blue-400' : 'text-gray-400'}
         >
             <div className="flex items-center gap-2">
                 <Shuffle size={20} />
